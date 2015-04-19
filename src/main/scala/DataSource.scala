@@ -59,18 +59,18 @@ class DataSource(val dsp: DataSourceParams)
       (entityId, item)
     }.cache()
 
-    // get all "user" "view" "item" events
+    // get all "user" "like" "item" events
     val viewEventsRDD: RDD[ViewEvent] = PEventStore.find(
       appName = dsp.appName,
       entityType = Some("user"),
-      eventNames = Some(List("view")),
+      eventNames = Some(List("like")),
       // targetEntityType is optional field of an event.
       targetEntityType = Some(Some("item")))(sc)
       // eventsDb.find() returns RDD[Event]
       .map { event =>
         val viewEvent = try {
           event.event match {
-            case "view" => ViewEvent(
+            case "like" => ViewEvent(
               user = event.entityId,
               item = event.targetEntityId.get,
               t = event.eventTime.getMillis)
