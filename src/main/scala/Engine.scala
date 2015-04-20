@@ -16,7 +16,9 @@ case class PredictedResult(
 ) extends Serializable
 
 case class ItemScore(
-  item: String,
+  itemID: String,
+  title: String,
+  imageURLs: List[String],
   score: Double
 ) extends Serializable
 

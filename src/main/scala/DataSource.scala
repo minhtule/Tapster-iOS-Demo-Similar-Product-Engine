@@ -48,7 +48,10 @@ class DataSource(val dsp: DataSourceParams)
     )(sc).map { case (entityId, properties) =>
       val item = try {
         // Assume categories is optional property of item.
-        Item(categories = properties.getOpt[List[String]]("categories"))
+        Item(
+          title = properties.get[String]("title"),
+          categories = properties.getOpt[List[String]]("categories"),
+          imageURLs = properties.get[List[String]]("imageURLs"))
       } catch {
         case e: Exception => {
           logger.error(s"Failed to get properties ${properties} of" +
@@ -96,7 +99,11 @@ class DataSource(val dsp: DataSourceParams)
 
 case class User()
 
-case class Item(categories: Option[List[String]])
+case class Item(
+  title: String,
+  categories: Option[List[String]],
+  imageURLs: List[String]
+)
 
 case class ViewEvent(user: String, item: String, t: Long)
 
