@@ -1,9 +1,8 @@
-package org.template.similarproduct
+package org.example.similarproduct
 
-import io.prediction.controller.PPreparator
+import org.apache.predictionio.controller.PPreparator
 
 import org.apache.spark.SparkContext
-import org.apache.spark.SparkContext._
 import org.apache.spark.rdd.RDD
 
 class Preparator

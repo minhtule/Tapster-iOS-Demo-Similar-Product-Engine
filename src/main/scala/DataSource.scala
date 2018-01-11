@@ -1,14 +1,12 @@
-package org.template.similarproduct
+package org.example.similarproduct
 
-import io.prediction.controller.PDataSource
-import io.prediction.controller.EmptyEvaluationInfo
-import io.prediction.controller.EmptyActualResult
-import io.prediction.controller.Params
-import io.prediction.data.storage.Event
-import io.prediction.data.store.PEventStore
+import org.apache.predictionio.controller.PDataSource
+import org.apache.predictionio.controller.EmptyEvaluationInfo
+import org.apache.predictionio.controller.EmptyActualResult
+import org.apache.predictionio.controller.Params
+import org.apache.predictionio.data.store.PEventStore
 
 import org.apache.spark.SparkContext
-import org.apache.spark.SparkContext._
 import org.apache.spark.rdd.RDD
 
 import grizzled.slf4j.Logger
@@ -102,8 +100,7 @@ case class User()
 case class Item(
   title: String,
   categories: Option[List[String]],
-  imageURLs: List[String]
-)
+  imageURLs: List[String])
 
 case class ViewEvent(user: String, item: String, t: Long)
 

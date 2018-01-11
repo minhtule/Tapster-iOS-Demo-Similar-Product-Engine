@@ -1,11 +1,10 @@
-package org.template.similarproduct
+package org.example.similarproduct
 
-import io.prediction.controller.P2LAlgorithm
-import io.prediction.controller.Params
-import io.prediction.data.storage.BiMap
+import org.apache.predictionio.controller.P2LAlgorithm
+import org.apache.predictionio.controller.Params
+import org.apache.predictionio.data.storage.BiMap
 
 import org.apache.spark.SparkContext
-import org.apache.spark.SparkContext._
 import org.apache.spark.mllib.recommendation.ALS
 import org.apache.spark.mllib.recommendation.{Rating => MLlibRating}
 
@@ -158,6 +157,7 @@ class ALSAlgorithm(val ap: ALSAlgorithmParams)
         i = i,
         items = model.items,
         categories = query.categories,
+        categoryBlackList = query.categoryBlackList,
         queryList = queryList,
         whiteList = whiteList,
         blackList = blackList
@@ -167,7 +167,7 @@ class ALSAlgorithm(val ap: ALSAlgorithmParams)
     val topScores = getTopN(filteredScore, query.num)(ord).toArray
 
     val itemScores = topScores.map { case (i, s) =>
-      new ItemScore(
+      ItemScore(
         itemID = model.itemIntStringMap(i),
         title = model.items(i).title,
         imageURLs = model.items(i).imageURLs,
@@ -175,7 +175,7 @@ class ALSAlgorithm(val ap: ALSAlgorithmParams)
       )
     }
 
-    new PredictedResult(itemScores)
+    PredictedResult(itemScores)
   }
 
   private
@@ -220,6 +220,7 @@ class ALSAlgorithm(val ap: ALSAlgorithmParams)
     i: Int,
     items: Map[Int, Item],
     categories: Option[Set[String]],
+    categoryBlackList: Option[Set[String]],
     queryList: Set[Int],
     whiteList: Option[Set[Int]],
     blackList: Option[Set[Int]]
@@ -234,6 +235,12 @@ class ALSAlgorithm(val ap: ALSAlgorithmParams)
         // keep this item if has ovelap categories with the query
         !(itemCat.toSet.intersect(cat).isEmpty)
       }.getOrElse(false) // discard this item if it has no categories
+    }.getOrElse(true) &&
+    categoryBlackList.map { cat =>
+      items(i).categories.map { itemCat =>
+        // discard this item if has ovelap categories with the query
+        (itemCat.toSet.intersect(cat).isEmpty)
+      }.getOrElse(true) // keep this item if it has no categories
     }.getOrElse(true)
   }
 
