@@ -19,7 +19,9 @@ case class PredictedResult(
 }
 
 case class ItemScore(
-  item: String,
+  itemID: String,
+  title: String,
+  imageURLs: List[String],
   score: Double
 )
 

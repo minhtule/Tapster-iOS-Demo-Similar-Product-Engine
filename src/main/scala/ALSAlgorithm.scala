@@ -168,7 +168,9 @@ class ALSAlgorithm(val ap: ALSAlgorithmParams)
 
     val itemScores = topScores.map { case (i, s) =>
       ItemScore(
-        item = model.itemIntStringMap(i),
+        itemID = model.itemIntStringMap(i),
+        title = model.items(i).title,
+        imageURLs = model.items(i).imageURLs,
         score = s
       )
     }

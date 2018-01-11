@@ -124,7 +124,9 @@ class CooccurrenceAlgorithm(val ap: CooccurrenceAlgorithmParams)
       .take(query.num)
       .map { case (index, count) =>
         ItemScore(
-          item = model.itemIntStringMap(index),
+          itemID = model.itemIntStringMap(index),
+          title = model.items(index).title,
+          imageURLs = model.items(index).imageURLs,
           score = count
         )
       }

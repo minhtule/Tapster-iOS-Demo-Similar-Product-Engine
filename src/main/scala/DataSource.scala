@@ -46,7 +46,10 @@ class DataSource(val dsp: DataSourceParams)
     )(sc).map { case (entityId, properties) =>
       val item = try {
         // Assume categories is optional property of item.
-        Item(categories = properties.getOpt[List[String]]("categories"))
+        Item(
+          title = properties.get[String]("title"),
+          categories = properties.getOpt[List[String]]("categories"),
+          imageURLs = properties.get[List[String]]("imageURLs"))
       } catch {
         case e: Exception => {
           logger.error(s"Failed to get properties ${properties} of" +
@@ -57,18 +60,18 @@ class DataSource(val dsp: DataSourceParams)
       (entityId, item)
     }.cache()
 
-    // get all "user" "view" "item" events
+    // get all "user" "like" "item" events
     val viewEventsRDD: RDD[ViewEvent] = PEventStore.find(
       appName = dsp.appName,
       entityType = Some("user"),
-      eventNames = Some(List("view")),
+      eventNames = Some(List("like")),
       // targetEntityType is optional field of an event.
       targetEntityType = Some(Some("item")))(sc)
       // eventsDb.find() returns RDD[Event]
       .map { event =>
         val viewEvent = try {
           event.event match {
-            case "view" => ViewEvent(
+            case "like" => ViewEvent(
               user = event.entityId,
               item = event.targetEntityId.get,
               t = event.eventTime.getMillis)
@@ -94,7 +97,10 @@ class DataSource(val dsp: DataSourceParams)
 
 case class User()
 
-case class Item(categories: Option[List[String]])
+case class Item(
+  title: String,
+  categories: Option[List[String]],
+  imageURLs: List[String])
 
 case class ViewEvent(user: String, item: String, t: Long)
 
